@@ -3,4 +3,6 @@
 
 # DOCUMENTATION
 
+Made by Blagov, Arkhipov, Syslicov
+
 TODO: Docs
