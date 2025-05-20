@@ -1,3 +1,4 @@
+#define  _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,14 +21,14 @@ int fs_load(const char *fname, FileSystem *fs) {
 
     char *line = NULL;
     size_t nline = 0;
-    ssize_t n;
+    size_t n;
     char *cur_path = NULL, *cur_buf = NULL;
     size_t cur_cap = 0, cur_len = 0;
 
-    while ((n = getline(&line, &nline, f)) != -1) {
+    while ( (int) (n = getline(&line, &nline, f)) != -1) {
         if (line[0] == '/') {                    /* новая запись */
             if (cur_path) {                      /* записываем предыдущую */
-                fs_insert(fs, cur_path);
+                fs_add(fs, cur_path);
                 fs_update(fs, cur_path, cur_buf ? cur_buf : "");
             }
             free(cur_path);
@@ -50,7 +51,7 @@ int fs_load(const char *fname, FileSystem *fs) {
         }
     }
     if (cur_path) {                              /* последний файл */
-        fs_insert(fs, cur_path);
+        fs_add(fs, cur_path);
         fs_update(fs, cur_path, cur_buf ? cur_buf : "");
     }
 
@@ -63,7 +64,7 @@ int fs_load(const char *fname, FileSystem *fs) {
 
 int fs_open(const FileSystem *fs, const char *path, char **out_content) {
     int idx = find_index(fs, path);
-    if (idx < 0) 
+    if (idx < 0)
         return -1;
     *out_content = strdup(fs->entries[idx].content);
     return 0;
@@ -71,7 +72,7 @@ int fs_open(const FileSystem *fs, const char *path, char **out_content) {
 
 int fs_remove(FileSystem *fs, const char *path) {
     int idx = find_index(fs, path);
-    if (idx < 0) 
+    if (idx < 0)
         return -1;
     free(fs->entries[idx].path);
     free(fs->entries[idx].content);
@@ -84,13 +85,13 @@ int fs_remove(FileSystem *fs, const char *path) {
 }
 
 int fs_add(FileSystem *fs, const char *path) {
-    if (find_index(fs, path) >= 0) 
+    if (find_index(fs, path) >= 0)
         return -1;    /* уже есть */
 
     FileEntry *tmp = realloc(fs->entries, (fs->count + 1) * sizeof *tmp);
-    if (!tmp) 
+    if (!tmp)
         return -1;
-    
+
     fs->entries = tmp;
     fs->entries[fs->count].path = strdup(path);
     fs->entries[fs->count].content = strdup("");
@@ -100,7 +101,7 @@ int fs_add(FileSystem *fs, const char *path) {
 
 int fs_update(FileSystem *fs, const char *path, const char *new_content) {
     int idx = find_index(fs, path);
-    if (idx < 0) 
+    if (idx < 0)
         return -1;
     free(fs->entries[idx].content);
     fs->entries[idx].content = strdup(new_content);

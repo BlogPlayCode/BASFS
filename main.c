@@ -23,7 +23,6 @@ static void print_help() {
     puts("  UPDATE <path>");
     puts("       (last line must be '.')");
     puts("  REMOVE <path>");
-    puts("  COUNT");
     puts("  EXIT");
 }
 
@@ -38,7 +37,7 @@ int main(void) {
     puts("BASFS loaded. Enter HELP for help.");
 
     char line[8192];
-    while (true) {
+    while (1 == 1) {
         printf("\nEnter command\n> ");
         if (!fgets(line, sizeof line, stdin))
             break;
@@ -89,8 +88,6 @@ int main(void) {
             if (buf) buf[len] = '\0';
             puts(fs_update(&fs, path, buf ? buf : "") == 0 ? "Updated" : "File not found");
             free(buf);
-        } else if (strcmp(cmd, "COUNT") == 0) {
-            printf("%zu\n", fs->count);
         } else {
             puts("Unknown command");
         }
