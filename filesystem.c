@@ -64,7 +64,11 @@ int fs_load(const char *fname, FileSystem *fs) {
 
 int fs_save(const char *fname, const FileSystem *fs) {
     FILE *f = fopen(fname, "w");
-    if (!f) return -1;
+    if (!f) {
+        perror("fopen failed"); // Вывод ошибки
+        return -1;
+    }
+    printf("Saving %zu files...\n", fs->count); // Отладочный вывод
     for (size_t i = 0; i < fs->count; ++i) {
         fprintf(f, "%s\n", fs->entries[i].path);
         fputs(fs->entries[i].content, f);

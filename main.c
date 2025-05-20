@@ -96,12 +96,13 @@ int main(void) {
             must_save = 1;
         } else if (strcmp(cmd, "LIST") == 0) {
             fs_list(&fs);
-/*
         } else if (strcmp(cmd, "SAVE") == 0) {
-            fs_save(FS_PATH, &fs);
-            must_save = 0;
-            puts("Saved");
-*/
+            if (fs_save(FS_PATH, &fs) == 0) {
+                must_save = 0;
+                puts("Saved");
+            } else {
+                puts("Save failed");
+            }
         } else {
             puts("Unknown command");
         }
