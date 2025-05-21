@@ -24,6 +24,7 @@ int  fs_update(FileSystem *fs, const char *path, const char *new_content);
 int  fs_remove(FileSystem *fs, const char *path);
 
 /* новые функции */
+void fs_list(const FileSystem *fs);
 // int    fs_crypto (FileSystem *fs, const char *path, const char *key);
 // int    fs_decrypto(FileSystem *fs, const char *path, const char *key);
 // size_t fs_count  (const FileSystem *fs);
