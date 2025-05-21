@@ -62,6 +62,20 @@ int fs_load(const char *fname, FileSystem *fs) {
     return 0;
 }
 
+int fs_save(const char *fname, const FileSystem *fs) {
+    FILE *f = fopen(fname, "w");
+    if (!f) return -1;
+    for (size_t i = 0; i < fs->count; ++i) {
+        fprintf(f, "%s\n", fs->entries[i].path);
+        fputs(fs->entries[i].content, f);
+        size_t L = strlen(fs->entries[i].content);
+        if (L == 0 || fs->entries[i].content[L-1] != '\n')
+            fputc('\n', f);
+    }
+    fclose(f);
+    return 0;
+}
+
 int fs_open(const FileSystem *fs, const char *path, char **out_content) {
     int idx = find_index(fs, path);
     if (idx < 0)
