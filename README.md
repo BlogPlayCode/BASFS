@@ -14,8 +14,10 @@ TODO: Docs
 $ gcc -std=c11 -Wall -Wextra -o basfs main.c filesystem.c
 
 # запуск
-$ ./bas_fs
-Псевдо-ФС загружена. Введите HELP для подсказки.
+$ ./basfs
+BASFS loaded. Enter HELP for help.
+
+Enter command
 > 
 ```
 
