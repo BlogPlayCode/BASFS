@@ -14,8 +14,8 @@ typedef struct {
 
 /* загрузка / сохранение / освобождение */
 int  fs_load (const char *fname, FileSystem *fs);
-int  fs_save (const char *fname, const FileSystem *fs);
-void fs_free (FileSystem *fs);
+// int  fs_save (const char *fname, const FileSystem *fs);
+// void fs_free (FileSystem *fs);
 
 /* CRUD */
 int  fs_open(const FileSystem *fs, const char *path, char **out_content);
@@ -24,9 +24,9 @@ int  fs_update(FileSystem *fs, const char *path, const char *new_content);
 int  fs_remove(FileSystem *fs, const char *path);
 
 /* новые функции */
-int    fs_crypto (FileSystem *fs, const char *path, const char *key);
-int    fs_decrypto(FileSystem *fs, const char *path, const char *key);
-size_t fs_count  (const FileSystem *fs);
-int    fs_rename (FileSystem *fs, const char *old_path, const char *new_path);
+// int    fs_crypto (FileSystem *fs, const char *path, const char *key);
+// int    fs_decrypto(FileSystem *fs, const char *path, const char *key);
+// size_t fs_count  (const FileSystem *fs);
+// int    fs_rename (FileSystem *fs, const char *old_path, const char *new_path);
 
 #endif /* FILESYSTEM_H */
