@@ -24,6 +24,7 @@ static void print_help() {
     puts("  UPDATE <path>");
     puts("       (last line must be '.')");
     puts("  REMOVE <path>");
+    puts("  SAVE");
     puts("  EXIT");
 }
 
@@ -38,6 +39,7 @@ int main(void) {
     puts("BASFS loaded. Enter HELP for help.");
 
     char line[8192];
+    bool must_save = 0;
     while (1 == 1) {
         printf("\nEnter command\n> ");
         if (!fgets(line, sizeof line, stdin))
@@ -51,6 +53,14 @@ int main(void) {
         if (strcmp(cmd, "HELP") == 0) {
             print_help();
         } else if (strcmp(cmd, "EXIT") == 0) {
+            if (must_save) {
+                puts("Do you want to save? Enter 'Y': ");
+                char *answ = strtok(NULL, "");
+                if (strcmp(answ, "Y") == 0) { 
+                    fs_save(FS_PATH, &fs);
+                    puts("Saved");
+                }
+            }
             break;
         } else if (strcmp(cmd, "OPEN") == 0) {
             char *path = strtok(NULL, "");
@@ -65,10 +75,12 @@ int main(void) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
             puts(fs_add(&fs, path) == 0 ? "OK" : "File already exists");
+            must_save = 1;
         } else if (strcmp(cmd, "REMOVE") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
             puts(fs_remove(&fs, path) == 0 ? "Deleted" : "File not found");
+            must_save = 1;
         } else if (strcmp(cmd, "UPDATE") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
@@ -89,8 +101,13 @@ int main(void) {
             if (buf) buf[len] = '\0';
             puts(fs_update(&fs, path, buf ? buf : "") == 0 ? "Updated" : "File not found");
             free(buf);
+            must_save = 1;
         } else if (strcmp(cmd, "LIST") == 0) {
             fs_list(&fs);
+        } else if (strcmp(cmd, "SAVE") == 0) {
+            fs_save(FS_PATH, &fs);
+            must_save = 0;
+            puts("Saved");
         } else {
             puts("Unknown command");
         }
