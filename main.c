@@ -18,6 +18,7 @@ static void trim_line(char *s) {
 static void print_help() {
     puts("Commands:");
     puts("  HELP");
+    puts("  LIST");
     puts("  OPEN <path>");
     puts("  ADD <path>");
     puts("  UPDATE <path>");
