@@ -99,6 +99,17 @@ int fs_add(FileSystem *fs, const char *path) {
     return 0;
 }
 
+void fs_list(const FileSystem *fs) {
+    if (fs->count == 0) {
+        printf("No files\n");
+        return;
+    }
+    printf("File list (%zu):\n", fs->count);
+    for (size_t i = 0; i < fs->count; ++i) {
+        printf("  - %s\n", fs->entries[i].path);
+    }
+}
+
 int fs_update(FileSystem *fs, const char *path, const char *new_content) {
     int idx = find_index(fs, path);
     if (idx < 0)
