@@ -14,7 +14,7 @@ typedef struct {
 
 /* загрузка / сохранение / освобождение */
 int  fs_load (const char *fname, FileSystem *fs);
-// int  fs_save (const char *fname, const FileSystem *fs);
+int  fs_save (const char *fname, const FileSystem *fs);
 // void fs_free (FileSystem *fs);
 
 /* CRUD */
