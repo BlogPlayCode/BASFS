@@ -88,6 +88,8 @@ int main(void) {
             if (buf) buf[len] = '\0';
             puts(fs_update(&fs, path, buf ? buf : "") == 0 ? "Updated" : "File not found");
             free(buf);
+        } else if (strcmp(cmd, "LIST") == 0) {
+            fs_list(&fs);
         } else {
             puts("Unknown command");
         }
