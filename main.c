@@ -39,7 +39,6 @@ int main(void) {
     puts("BASFS loaded. Enter HELP for help.");
 
     char line[8192];
-    int must_save = 0;
     while (1 == 1) {
         printf("\nEnter command\n> ");
         if (!fgets(line, sizeof line, stdin))
@@ -57,6 +56,7 @@ int main(void) {
         } else if (strcmp(cmd, "OPEN") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
+            if (path[0] != '/') { puts("Path must start with '/'"); continue; }
             char *content = NULL;
             if (fs_open(&fs, path, &content) == 0)
                 printf("%s\n", content);
@@ -66,16 +66,17 @@ int main(void) {
         } else if (strcmp(cmd, "ADD") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
+            if (path[0] != '/') { puts("Path must start with '/'"); continue; }
             puts(fs_add(&fs, path) == 0 ? "OK" : "File already exists");
-            must_save = 1;
         } else if (strcmp(cmd, "REMOVE") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
             puts(fs_remove(&fs, path) == 0 ? "Deleted" : "File not found");
-            must_save = 1;
         } else if (strcmp(cmd, "UPDATE") == 0) {
             char *path = strtok(NULL, "");
             if (!path) { puts("Need a path"); continue; }
+            if (path[0] != '/') { puts("Path must start with '/'"); continue; }
+            fs_add(&fs, path);
             puts("Enter new content (last line must be '.'):");
             char *buf = NULL;
             size_t cap = 0, len = 0;
@@ -93,12 +94,10 @@ int main(void) {
             if (buf) buf[len] = '\0';
             puts(fs_update(&fs, path, buf ? buf : "") == 0 ? "Updated" : "File not found");
             free(buf);
-            must_save = 1;
         } else if (strcmp(cmd, "LIST") == 0) {
             fs_list(&fs);
         } else if (strcmp(cmd, "SAVE") == 0) {
             if (fs_save(FS_PATH, &fs) == 0) {
-                must_save = 0;
                 puts("Saved");
             } else {
                 puts("Save failed");

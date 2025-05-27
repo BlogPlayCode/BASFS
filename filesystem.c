@@ -65,40 +65,45 @@ int fs_load(const char *fname, FileSystem *fs) {
 int fs_save(const char *fname, const FileSystem *fs) {
     FILE *f = fopen(fname, "w");
     if (!f) {
-        perror("File opening error");
         return -1;
     }
 
-    for (size_t i = 0; i < fs->count; ++i) {
-        // Запись пути
-        if (fprintf(f, "%s\n", fs->entries[i].path) < 0) {
+    for (size_t i = 0; i < fs->count; i++) {
+        // Предполагаем, что entries - это массив структур FileEntry
+        // с полями char *path и char *content
+        char *path = ((char **)(fs->entries))[i * 2];     // path
+        char *content = ((char **)(fs->entries))[i * 2 + 1]; // content
+
+        // Обрабатываем путь: удаляем завершающие \r и \n
+        char *path_copy = strdup(path);
+        if (!path_copy) {
             fclose(f);
-            perror("Path writing error");
             return -1;
         }
-
-        // Запись содержимого
-        if (fputs(fs->entries[i].content, f) == EOF) {
-            fclose(f);
-            perror("Content writing error");
-            return -1;
+        size_t len = strlen(path_copy);
+        while (len > 0 && (path_copy[len-1] == '\n' || path_copy[len-1] == '\r')) {
+            path_copy[--len] = '\0';
         }
+        fprintf(f, "%s\n", path_copy);
+        free(path_copy);
 
-        // Добавление завершающего '\n', если его нет
-        size_t L = strlen(fs->entries[i].content);
-        if (L == 0 || fs->entries[i].content[L-1] != '\n') {
-            if (fputc('\n', f) == EOF) {
-                fclose(f);
-                perror("New line addition error");
-                return -1;
+        // Записываем содержимое, разбивая на строки по \n
+        if (content) {
+            const char *pos = content;
+            while (*pos) {
+                const char *next = strchr(pos, '\n');
+                if (next) {
+                    fprintf(f, "%.*s\n", (int)(next - pos), pos);
+                    pos = next + 1;
+                } else {
+                    fprintf(f, "%s\n", pos);
+                    break;
+                }
             }
         }
     }
 
-    if (fclose(f) != 0) {
-        perror("File closing error");
-        return -1;
-    }
+    fclose(f);
     return 0;
 }
 
@@ -152,8 +157,10 @@ void fs_list(const FileSystem *fs) {
 
 int fs_update(FileSystem *fs, const char *path, const char *new_content) {
     int idx = find_index(fs, path);
-    if (idx < 0)
+    if (idx < 0) {
+        puts(path);
         return -1;
+    }
     free(fs->entries[idx].content);
     fs->entries[idx].content = strdup(new_content);
     return 0;
