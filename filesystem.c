@@ -65,18 +65,40 @@ int fs_load(const char *fname, FileSystem *fs) {
 int fs_save(const char *fname, const FileSystem *fs) {
     FILE *f = fopen(fname, "w");
     if (!f) {
-        perror("fopen failed"); // Вывод ошибки
+        perror("File opening error");
         return -1;
     }
-    printf("Saving %zu files...\n", fs->count); // Отладочный вывод
+
     for (size_t i = 0; i < fs->count; ++i) {
-        fprintf(f, "%s\n", fs->entries[i].path);
-        fputs(fs->entries[i].content, f);
+        // Запись пути
+        if (fprintf(f, "%s\n", fs->entries[i].path) < 0) {
+            fclose(f);
+            perror("Path writing error");
+            return -1;
+        }
+
+        // Запись содержимого
+        if (fputs(fs->entries[i].content, f) == EOF) {
+            fclose(f);
+            perror("Content writing error");
+            return -1;
+        }
+
+        // Добавление завершающего '\n', если его нет
         size_t L = strlen(fs->entries[i].content);
-        if (L == 0 || fs->entries[i].content[L-1] != '\n')
-            fputc('\n', f);
+        if (L == 0 || fs->entries[i].content[L-1] != '\n') {
+            if (fputc('\n', f) == EOF) {
+                fclose(f);
+                perror("New line addition error");
+                return -1;
+            }
+        }
     }
-    fclose(f);
+
+    if (fclose(f) != 0) {
+        perror("File closing error");
+        return -1;
+    }
     return 0;
 }
 
