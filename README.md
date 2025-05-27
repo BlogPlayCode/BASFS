@@ -2,7 +2,7 @@
 
 # DOCUMENTATION
 
-Made by Blagov, Arkhipov, Syslicov
+Made by Blagov, Arkhipov, Suslikov
 
 TODO: Docs
 <br><br>
