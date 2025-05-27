@@ -61,3 +61,66 @@ Enter command
 * Код придерживается C11, warning-clean при `-Wall -Wextra`.
 
 ---
+
+```shell
+user@user-V:~/Desktop/BASFS-dev$ ./basfs
+BASFS loaded. Enter HELP for help.
+
+Enter command
+> help
+Commands:
+  HELP
+  LIST
+  OPEN <path>
+  ADD <path>
+  UPDATE <path>
+       (last line must be '.')
+  REMOVE <path>
+  SAVE
+  EXIT
+
+Enter command
+> list
+File list (1):
+  - /abc
+
+Enter command
+> open /abc
+abc
+
+Enter command
+> add /test       
+OK
+
+Enter command
+> update /test
+Enter new content (last line must be '.'):
+1234
+5678
+.
+Updated
+
+Enter command
+> list
+File list (2):
+  - /abc
+  - /test
+
+Enter command
+> remove /abc       
+Deleted
+
+Enter command
+> open /test
+1234
+5678
+
+Enter command
+> save
+Saved
+
+Enter command
+> exit
+
+Bye!
+```
